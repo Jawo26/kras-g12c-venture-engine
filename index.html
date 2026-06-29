@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KRAS G12C Venture Engine - Scale Dashboard</title>
+    <title>KRAS G12C Venture Engine - Production Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -71,7 +71,7 @@
             </div>
             <div class="stats-banner">
                 <div class="stat-item">
-                    <div class="stat-val" id="total-count">0</div>
+                    <div class="stat-val" id="total-count">...</div>
                     <div class="stat-lbl">Active Assets Loaded</div>
                 </div>
             </div>
@@ -92,66 +92,16 @@
         </div>
 
         <div class="controls">
-            <input type="text" class="search-box" id="search-input" placeholder="Search by Trial ID (NCTId) or Phase (e.g. PHASE1, PHASE2, PHASE3)...">
+            <input type="text" class="search-box" id="search-input" placeholder="Search by Trial ID (NCTId) or Phase (e.g. PHASE1, PHASE2, PHASE3)..." disabled>
         </div>
 
-        <div class="cards-grid" id="cards-container"></div>
+        <div class="cards-grid" id="cards-container">
+            <div style="color:#9ca3af; font-size:14px; padding:20px;">Stream-loading remote knowledge layer assets...</div>
+        </div>
     </div>
 
     <script>
-        // ENTERPRISE SEED PIPELINE: Real base IDs mapped directly from your Colab runtime stack
-        const baseNctIds = [
-            "06024174", "05840510", "05853575", "05578092", "05609578", "06497556", "06130254", "06801418", 
-            "05924152", "05673187", "04793958", "05375994", "04975256", "04330664", "06039384", "06690138", 
-            "03178552", "06734208", "06677957", "04589845"
-        ];
-
-        const phaseList = ["PHASE1", "PHASE2", "PHASE3", "PHASE NOT SPECIFIED"];
-        const enrollmentPool = [5, 6, 200, 64, 90, 338, 1, 160, 16, 68, 310, 25, 42, 18, 30, 12, 145, 500];
-
-        // DYNAMIC DATA SIMULATOR ENGINE (Supports 63, 500, or up to 10,000 entities seamlessly)
-        function generateScalableDataset(targetSize) {
-            const data = [];
-            for (let i = 0; i < targetSize; i++) {
-                // Determine NCT identification structure
-                let idString = i < baseNctIds.length ? baseNctIds[i] : String(6000000 + (i * 1437)).padStart(8, '0');
-                let phase = phaseList[i % phaseList.length];
-                let enrollment = enrollmentPool[i % enrollmentPool.length];
-                
-                // Real-time generation of raw telemetry string matching pandas dataframe structures
-                let rawAuditTrail = "";
-                let trustScore = 60.0;
-                let trackingConfidence = "n/a";
-
-                if (phase === "PHASE1") {
-                    trustScore = enrollment < 10 ? 40.0 : 37.0;
-                    rawAuditTrail = "Weights[P:0.1, E:0.1, S:0.6, R:0.2] | Automated pipeline toxicity tracking.";
-                } else if (phase === "PHASE2") {
-                    trustScore = enrollment > 80 ? 68.0 : 60.0;
-                    trackingConfidence = "medium";
-                    rawAuditTrail = "Weights[P:0.2, E:0.4, S:0.2, R:0.2] | Cohort tumor response verification protocol.";
-                } else if (phase === "PHASE3") {
-                    trustScore = enrollment > 300 ? 81.0 : 70.0;
-                    rawAuditTrail = "Weights[P:0.4, E:0.3, S:0.1, R:0.2] | Statistical power compliance check.";
-                } else {
-                    trustScore = 67.5;
-                    rawAuditTrail = "Weights[P:0.25, E:0.25, S:0.25, R:0.25] | Fallback baseline distribution configuration.";
-                }
-
-                data.push({
-                    NCTId: "NCT" + idString,
-                    Phase: phase,
-                    EnrollmentCount: enrollment,
-                    Enterprise_TrustScore: trustScore,
-                    TrustScore_Confidence: trackingConfidence,
-                    Architect_Audit_Trail: rawAuditTrail
-                });
-            }
-            return data;
-        }
-
-        // SET TARGET SCALE HERE: Change to 63, 500, or more. Interface auto-adapts instantly!
-        const rawData = generateScalableDataset(63);
+        let globalDataset = [];
 
         function getScoreClass(score) {
             if (score >= 75) return 'score-high';
@@ -160,13 +110,13 @@
         }
 
         function getPhaseClass(phase) {
-            if (phase.includes('PHASE1')) return 'p1';
-            if (phase.includes('PHASE2')) return 'p2';
-            if (phase.includes('PHASE3')) return 'p3';
+            const p = String(phase).toUpperCase();
+            if (p.includes('PHASE1')) return 'p1';
+            if (p.includes('PHASE2')) return 'p2';
+            if (p.includes('PHASE3')) return 'p3';
             return 'pns';
         }
 
-        // INTELLIGENT PARSER: Dynamic regex interpreter extracting matrix details without hardcoded keys
         function parseWeightFractions(trailString) {
             const result = { p: false, e: false, s: false, r: false };
             try {
@@ -179,7 +129,7 @@
                         if(tokens.length === 2) {
                             const key = tokens[0].trim().toLowerCase();
                             const val = parseFloat(tokens[1].trim());
-                            if(val > 0.15) { // Evaluate threshold configuration bias
+                            if(val > 0.15) {
                                 if (key === 'p') result.p = true;
                                 if (key === 'e') result.e = true;
                                 if (key === 's') result.s = true;
@@ -189,7 +139,7 @@
                     });
                 }
             } catch (err) {
-                console.error("Parser safety execution error caught: ", err);
+                console.error(err);
             }
             return result;
         }
@@ -207,29 +157,36 @@
             data.forEach(row => {
                 const card = document.createElement('div');
                 card.className = 'k-card';
-                const scoreClass = getScoreClass(row.Enterprise_TrustScore);
-                const phaseClass = getPhaseClass(row.Phase);
                 
-                // Compute visual status chips dynamically via telemetry parsing
-                const activeWeights = parseWeightFractions(row.Architect_Audit_Trail);
+                // Native extraction layers with fallback structures for absolute safety bounds
+                const nct = row.NCTId || "NCT00000000";
+                const phase = row.Phase || "UNKNOWN";
+                const enrollment = row.EnrollmentCount !== undefined && row.EnrollmentCount !== null ? row.EnrollmentCount : "N/A";
+                const score = row.Enterprise_TrustScore !== undefined && row.Enterprise_TrustScore !== null ? parseFloat(row.Enterprise_TrustScore) : 0.0;
+                const confidence = row.TrustScore_Confidence || "n/a";
+                const auditTrail = row.Architect_Audit_Trail || "Weights[P:0.25, E:0.25, S:0.25, R:0.25] | Runtime object integration tracking.";
+
+                const scoreClass = getScoreClass(score);
+                const phaseClass = getPhaseClass(phase);
+                const activeWeights = parseWeightFractions(auditTrail);
                 
                 card.innerHTML = `
                     <div class="card-top">
-                        <span class="card-id">${row.NCTId}</span>
-                        <span class="phase-badge ${phaseClass}">${row.Phase}</span>
+                        <span class="card-id">${nct}</span>
+                        <span class="phase-badge ${phaseClass}">${phase}</span>
                     </div>
                     <div class="score-section">
                         <span class="score-lbl">TRUST SCORE</span>
-                        <span class="score-val ${scoreClass}">${row.Enterprise_TrustScore.toFixed(1)}</span>
+                        <span class="score-val ${scoreClass}">${score.toFixed(1)}</span>
                     </div>
                     <div class="metrics-list">
                         <div class="metric-row">
                             <span class="metric-lbl">Cohort Enrollment:</span>
-                            <span class="metric-val">${row.EnrollmentCount} patients</span>
+                            <span class="metric-val">${enrollment} patients</span>
                         </div>
                         <div class="metric-row">
                             <span class="metric-lbl">BICR Confidence:</span>
-                            <span class="metric-val" style="text-transform:uppercase;">${row.TrustScore_Confidence}</span>
+                            <span class="metric-val" style="text-transform:uppercase;">${confidence}</span>
                         </div>
                     </div>
                     <div class="human-weights">
@@ -240,7 +197,7 @@
                             <span class="w-chip ${activeWeights.s ? 'w-active' : ''}">SAFE</span>
                             <span class="w-chip ${activeWeights.r ? 'w-active' : ''}">REG</span>
                         </div>
-                        <div style="font-size:11px; color:#9ca3af; margin-top:8px; font-family:monospace; line-height:1.3;">${row.Architect_Audit_Trail}</div>
+                        <div style="font-size:11px; color:#9ca3af; margin-top:8px; font-family:monospace; line-height:1.3;">${auditTrail}</div>
                     </div>
                 `;
                 container.appendChild(card);
@@ -248,22 +205,44 @@
             document.getElementById('total-count').innerText = data.length;
         }
 
-        // Bulletproof live system event query filtering
+        // Live Asynchronous Data Node Connection
+        async function initializeVentureEngine() {
+            try {
+                // Fetch dynamic backend source natively from repository deployment context
+                const response = await fetch('kras_g12c_knowledge_objects.json');
+                if (!response.ok) throw new Error("Database dynamic stream connection failure");
+                
+                globalDataset = await response.json();
+                
+                // Enable system input mechanisms upon successful data handshake
+                const searchBox = document.getElementById('search-input');
+                searchBox.removeAttribute('disabled');
+                searchBox.placeholder = "Search by Trial ID (NCTId) or Phase (e.g. PHASE1, PHASE2, PHASE3)...";
+                
+                renderCards(globalDataset);
+            } catch (err) {
+                console.error(err);
+                document.getElementById('cards-container').innerHTML = 
+                    `<div style="color:#ef4444; font-size:14px; padding:20px;">System Connection Error: ${err.message}. Ensure backend JSON file tracks production root.</div>`;
+            }
+        }
+
+        // Search engine listener logic across dynamic stream array scope
         document.getElementById('search-input').addEventListener('input', function(e) {
             const query = e.target.value.toLowerCase().trim();
             if (query === "") {
-                renderCards(rawData);
+                renderCards(globalDataset);
             } else {
-                const filtered = rawData.filter(item => 
-                    item.NCTId.toLowerCase().includes(query) || 
-                    item.Phase.toLowerCase().includes(query)
+                const filtered = globalDataset.filter(item => 
+                    (item.NCTId && item.NCTId.toLowerCase().includes(query)) || 
+                    (item.Phase && item.Phase.toLowerCase().includes(query))
                 );
                 renderCards(filtered);
             }
         });
 
-        // Initialize production load cycle immediately on runtime boot
-        renderCards(rawData);
+        // Fire initialization sequence on core runtime context mount
+        window.addEventListener('DOMContentLoaded', initializeVentureEngine);
     </script>
 </body>
 </html>
