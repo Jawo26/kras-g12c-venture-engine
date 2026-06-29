@@ -19,10 +19,9 @@
         .stat-val { font-size: 24px; font-weight: 700; color: #ffffff; }
         .stat-lbl { font-size: 11px; color: #9ca3af; text-transform: uppercase; margin-top: 2px; }
         
-        /* FORMULA EXPLANATION BOX */
         .formula-card { background: linear-gradient(135deg, #111827 0%, #1e1b4b 100%); border: 1px solid #3730a3; border-radius: 14px; padding: 25px; margin-bottom: 30px; }
         .formula-title { color: #818cf8; font-size: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
-        .formula-math { font-size: 22px; font-weight: 600; color: #ffffff; margin: 15px 0; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; font-family: monospace; text-align: center; border-left: 4px solid #6366f1; }
+        .formula-math { font-size: 20px; font-weight: 600; color: #ffffff; margin: 15px 0; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; font-family: monospace; text-align: center; border-left: 4px solid #6366f1; word-wrap: break-word; }
         .formula-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; margin-top: 15px; }
         .f-item { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; font-size: 13px; line-height: 1.4; }
         .f-item strong { color: #38bdf8; }
@@ -38,10 +37,11 @@
         .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .card-id { font-size: 13px; font-weight: 600; color: #38bdf8; background: rgba(56, 189, 248, 0.08); padding: 6px 12px; border-radius: 6px; }
         
-        .phase-badge { font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 6px; }
+        .phase-badge { font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 6px; text-transform: uppercase; }
         .p1 { background: rgba(16, 185, 129, 0.08); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
         .p2 { background: rgba(245, 158, 11, 0.08); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
         .p3 { background: rgba(239, 68, 68, 0.08); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .pns { background: rgba(107, 114, 128, 0.08); color: #6b7280; border: 1px solid rgba(107, 114, 128, 0.3); }
         
         .score-section { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 20px; border-bottom: 1px solid #1f2937; padding-bottom: 16px; }
         .score-lbl { font-size: 12px; color: #9ca3af; font-weight: 500; letter-spacing: 0.5px; }
@@ -55,7 +55,6 @@
         .metric-lbl { color: #9ca3af; }
         .metric-val { font-weight: 500; color: #f3f4f6; }
         
-        /* HUMAN-READABLE WEIGHT DESIGN */
         .human-weights { border-top: 1px dashed #1f2937; padding-top: 15px; }
         .weight-title { font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5px; }
         .weight-chips { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -101,21 +100,9 @@
     </div>
 
     <script>
-        // Generated master dataset containing all 63 elements with absolute structural consistency
-        const rawData = [];
-        const phases = ["PHASE1", "PHASE2", "PHASE3", "PHASE1", "PHASE2"];
-        const enrollments = [5, 6, 200, 64, 90, 338, 1, 160, 16, 68, 12, 45, 500];
-        
-        for(let i = 1; i <= 63; i++) {
-            let idNum = String(i).padStart(4, '0');
-            let phase = phases[i % phases.length];
-            let enrollment = enrollments[i % enrollments.length];
-            let score = 70.0;
-            let conf = "n/a";
-            let details = "";
-            
-            if(phase === "PHASE1") {
-                score = enrollment < 10 ? 40.0 : 37.0;
-                details = "P:10% | E:10% | S:60% (High Safety Bias) | R:20%";
-            } else if(phase === "PHASE2") {
-                score
+        // Production Mock Engine mirroring exactly 63 unique rows
+        const rawData = [
+            { NCTId: "NCT06024174", Phase: "PHASE1", EnrollmentCount: 5, Enterprise_TrustScore: 40.0, TrustScore_Confidence: "n/a", Human_Details: "Weights[P:0.1, E:0.1, S:0.6, R:0.2] | Small sample footprint safety audit bias." },
+            { NCTId: "NCT05840510", Phase: "PHASE1", EnrollmentCount: 6, Enterprise_TrustScore: 37.0, TrustScore_Confidence: "n/a", Human_Details: "Weights[P:0.1, E:0.1, S:0.6, R:0.2] | Phase 1 standard toxicity screening index." },
+            { NCTId: "NCT05853575", Phase: "PHASE NOT SPECIFIED", EnrollmentCount: 200, Enterprise_TrustScore: 67.5, TrustScore_Confidence: "n/a", Human_Details: "Weights[P:0.25, E:0.25, S:0.25, R:0.25] | Neutral normalized baseline matrix." },
+            { NCTId: "NCT05578092", Phase: "PHASE1", EnrollmentCount: 64, Enterprise_TrustScore: 37.0, TrustScore_
